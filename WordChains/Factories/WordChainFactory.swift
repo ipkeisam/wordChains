@@ -44,11 +44,15 @@ class WordChainFactory {
             }
         }
         return ((count == 1) && (word1.count == word2.count))
-        //|| ((count == 0) && (abs(word1.count - word2.count) == 1))
+    }
+    
+    func isSimilar(_ word : String, _ target : String) -> Bool {
+        return word.rangeOfCharacter(from: CharacterSet(charactersIn: target)) != nil
     }
     
     func findWordChain(_ start : String, _ end : String) -> [String] {
         var wordChain = [String]()
+        wordChain.append(start)
         var queue = Queue<QueueItem>()
         let queueItem = QueueItem(start, 1)
         queue.enqueue(queueItem)
@@ -60,12 +64,15 @@ class WordChainFactory {
             
             for i in 0..<words.count {
                 let temp = words[i]
-                if (!wordChain.contains(temp) && isNextWord((current?.word)!, temp)) {
+                if (!wordChain.contains(temp)
+                    && isNextWord((current?.word)!, temp)
+                    && isSimilar(temp, end)
+                    ) {
                     queueItem.word  = temp
                     queueItem.length = (current?.length)! + 1
                     queue.enqueue(queueItem)
                     wordChain.append(temp)
-                    print(temp)
+                    //print(temp)
                     
                     if temp == end {
                         return wordChain
