@@ -66,8 +66,7 @@ class WordChainFactory {
                 let temp = words[i]
                 if (!wordChain.contains(temp)
                     && isNextWord((current?.word)!, temp)
-                    && isSimilar(temp, end)
-                    ) {
+                    && isSimilar(temp, end)) {
                     queueItem.word  = temp
                     queueItem.length = (current?.length)! + 1
                     queue.enqueue(queueItem)
