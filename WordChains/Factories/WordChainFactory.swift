@@ -57,8 +57,10 @@ class WordChainFactory {
         wordChain.append(startWord)
         
         if startWord.count > endWord.count {
+            for i in (endWord.count..<startWord.count).reversed() {
+                wordChain.append(String(startWord.prefix(i)))
+            }
             startWord = String(startWord.prefix(endWord.count))
-            wordChain.append(startWord)
         }
         
         if startWord.count < endWord.count {
@@ -87,7 +89,9 @@ class WordChainFactory {
                     
                     if temp == endWord {
                         if (endWord != end) {
-                            wordChain.append(end)
+                            for i in (endWord.count+1...end.count) {
+                                wordChain.append(String(end.prefix(i)))
+                            }
                         }
                         return wordChain
                     }
@@ -95,7 +99,9 @@ class WordChainFactory {
             }
         }
         if (endWord != end) {
-            wordChain.append(end)
+            for i in (endWord.count+1...end.count) {
+                wordChain.append(String(end.prefix(i)))
+            }
         }
         return wordChain
     }
