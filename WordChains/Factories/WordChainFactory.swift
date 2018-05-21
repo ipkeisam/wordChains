@@ -57,9 +57,7 @@ class WordChainFactory {
         wordChain.append(startWord)
         
         if startWord.count > endWord.count {
-            for i in (endWord.count..<startWord.count).reversed() {
-                wordChain.append(String(startWord.prefix(i)))
-            }
+            addStartWordChain(startWord, endWord, &wordChain)
             startWord = String(startWord.prefix(endWord.count))
         }
         
@@ -88,21 +86,27 @@ class WordChainFactory {
                     //print(temp)
                     
                     if temp == endWord {
-                        if (endWord != end) {
-                            for i in (endWord.count+1...end.count) {
-                                wordChain.append(String(end.prefix(i)))
-                            }
-                        }
+                        addEndWordChain(endWord, end, &wordChain)
                         return wordChain
                     }
                 }
             }
         }
+        addEndWordChain(endWord, end, &wordChain)
+        return wordChain
+    }
+    
+    func addStartWordChain(_ startWord : String, _ endWord : String, _ wordChain : inout [String]) {
+        for i in (endWord.count..<startWord.count).reversed() {
+            wordChain.append(String(startWord.prefix(i)))
+        }
+    }
+    
+    func addEndWordChain(_ endWord : String, _ end : String, _ wordChain : inout [String]) {
         if (endWord != end) {
             for i in (endWord.count+1...end.count) {
                 wordChain.append(String(end.prefix(i)))
             }
         }
-        return wordChain
     }
 }
