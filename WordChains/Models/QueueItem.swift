@@ -10,10 +10,10 @@ import Foundation
 
 class QueueItem {
     var word : String
-    var length : Int
+    var visited : Bool
     
-    init(_ word : String, _ length : Int) {
+    init(_ word : String, _ visited : Bool) {
         self.word = word
-        self.length = length
+        self.visited = visited
     }
 }

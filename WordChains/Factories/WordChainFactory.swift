@@ -11,7 +11,8 @@ import Foundation
 class WordChainFactory {
     
     var jsonReader : JsonReader
-    var words : [String]
+    var words : Queue<String>
+    var wordChain = [String]()
     
     init() {
         jsonReader = JsonReader()
@@ -22,10 +23,10 @@ class WordChainFactory {
         return findWordChain(start, end)
     }
     
-    func isNextWord(_ word1 : String, _ word2 : String) -> Bool {
+    func isNextWord(_ word1 : String, _ word2 : String) -> Int {
         
         if abs(word1.count - word2.count) > 1 {
-            return false
+            return 0
         }
         
         let word1Lower = word1.lowercased()
@@ -40,72 +41,57 @@ class WordChainFactory {
                 count = count + 1
             }
             if (count > 1) {
-                return false
+                return 0
             }
         }
-        return ((count == 1) && (word1.count == word2.count))
+        if ((count == 1) && (word1.count == word2.count)) {
+            return 2
+        }
+        if ((count == 0) && abs(word1.count - word2.count) == 1) {
+            return 1
+        }
+        return 0
     }
     
-    func isSimilar(_ word : String, _ target : String) -> Bool {
-        return word.rangeOfCharacter(from: CharacterSet(charactersIn: target)) != nil
+    func isSimilar(_ word : String, _ target : String) -> Int {
+        return Set(word).intersection(Set(target)).count
     }
     
     func findWordChain(_ start : String, _ end : String) -> [String] {
-        var startWord = start
-        var endWord = end
-        var wordChain = [String]()
-        wordChain.append(startWord)
+
+        wordChain.append(start)
+        findWordChainUtil(start, end)
         
-        if startWord.count > endWord.count {
-            addStartWordChain(startWord, endWord, &wordChain)
-            startWord = String(startWord.prefix(endWord.count))
+        while (wordChain.last != end) {
+            words.enqueue(wordChain.last!)
+            wordChain.removeLast()
+            findWordChainUtil(start, end)
         }
         
-        if startWord.count < endWord.count {
-            endWord = String(endWord.prefix(startWord.count))
-        }
-        
-        var queue = Queue<QueueItem>()
-        let queueItem = QueueItem(startWord, 1)
-        queue.enqueue(queueItem)
-        
-        while (!queue.isEmpty()) {
-            
-            let current = queue.peek()
-            _ = queue.dequeue()
-            
-            for i in 0..<words.count {
-                let temp = words[i]
-                if (!wordChain.contains(temp)
-                    && isNextWord((current?.word)!, temp)
-                    && isSimilar(temp, endWord)) {
-                    queueItem.word  = temp
-                    queueItem.length = (current?.length)! + 1
-                    queue.enqueue(queueItem)
-                    wordChain.append(temp)
-                    //print(temp)
-                    
-                    if temp == endWord {
-                        addEndWordChain(endWord, end, &wordChain)
-                        return wordChain
-                    }
-                }
-            }
-        }
-        addEndWordChain(endWord, end, &wordChain)
         return wordChain
     }
     
-    func addStartWordChain(_ startWord : String, _ endWord : String, _ wordChain : inout [String]) {
-        for i in (endWord.count..<startWord.count).reversed() {
-            wordChain.append(String(startWord.prefix(i)))
-        }
-    }
-    
-    func addEndWordChain(_ endWord : String, _ end : String, _ wordChain : inout [String]) {
-        if (endWord != end) {
-            for i in (endWord.count+1...end.count) {
-                wordChain.append(String(end.prefix(i)))
+    func findWordChainUtil(_ start : String, _ end : String) {
+        var current = start
+        print(current)
+        var score = 1
+        while (!words.isEmpty()) {
+            let temp = words.peek()
+            _ = words.dequeue()
+            
+            let tempScore = isNextWord(current, temp!) * isSimilar(temp!, end)
+            if (!wordChain.contains(temp!)
+                && tempScore >= score) {
+                wordChain.append(temp!)
+                current = temp!
+                //print(current)
+                score = tempScore
+                if temp == end {
+                    return
+                }
+            }
+            else {
+                words.enqueue(temp!)
             }
         }
     }

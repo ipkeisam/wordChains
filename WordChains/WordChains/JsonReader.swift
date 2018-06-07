@@ -10,8 +10,8 @@ import Foundation
 
 class JsonReader {
     
-    func read(filename : String) -> [String] {
-        var words = [String]()
+    func read(filename : String) -> Queue<String> {
+        var words = Queue<String>()
         if let path = Bundle.main.path(forResource: filename, ofType: "json") {
             do {
                 let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
@@ -19,7 +19,7 @@ class JsonReader {
                 
                 if let jsonResultArr = jsonResult as? Dictionary<String, AnyObject>{
                     for key in jsonResultArr.keys {
-                        words.append(key)
+                        words.enqueue(key)
                     }
                 }
             } catch {
