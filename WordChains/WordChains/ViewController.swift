@@ -10,11 +10,19 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var startWord: UITextField!
+    @IBOutlet weak var endWord: UITextField!
+    @IBOutlet weak var output: UILabel!
+    
     var wordChainFactory = WordChainFactory()
     
+    @IBAction func generateWordChain(_ sender: Any) {
+        let output = wordChainFactory.create(startWord.text!, endWord.text!)
+        print(output)
+        self.output.text = output.description
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(wordChainFactory.create("Cat", "Dog"))
     }
 
     override func didReceiveMemoryWarning() {

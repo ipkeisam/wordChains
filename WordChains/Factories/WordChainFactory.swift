@@ -54,7 +54,10 @@ class WordChainFactory {
     }
     
     func isSimilar(_ word : String, _ target : String) -> Int {
-        return Set(word).intersection(Set(target)).count
+        var score = Set(word).intersection(Set(target)).count
+        let lenghtDiff = abs(word.count - target.count)
+        score = score * (10 - lenghtDiff)
+        return score
     }
     
     func findWordChain(_ start : String, _ end : String) -> [String] {
@@ -73,7 +76,6 @@ class WordChainFactory {
     
     func findWordChainUtil(_ start : String, _ end : String) {
         var current = start
-        print(current)
         var score = 1
         while (!words.isEmpty()) {
             let temp = words.peek()
